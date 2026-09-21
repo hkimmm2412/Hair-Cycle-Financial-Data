@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HairCycle — Phân tích Tài chính Toàn diện (Copy)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#F0F7F2;color:#1a1a1a;font-size:13px}
+.wrap{max-width:1180px;margin:0 auto;padding:20px}
+
+/* HEADER */
+.banner{background:linear-gradient(135deg,#0B3D1E 0%,#1B5E20 50%,#2E7D32 100%);
+  padding:18px 28px;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:14px}
+.banner h1{color:#fff;font-size:20px;font-weight:800}
+.banner p{color:#A5D6A7;font-size:12px;margin-top:3px}
+.badge{background:rgba(255,255,255,.15);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-left:auto}
+
+/* SECTION */
+.section{background:#fff;margin-bottom:16px;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.section:first-of-type{border-radius:0 0 8px 8px}
+.sec-header{background:#1B5E20;color:#fff;padding:10px 18px;font-size:13px;font-weight:700;border-radius:0 0 0 0}
+.sec-header.blue{background:#1565C0}
+.sec-header.amber{background:#E65100}
+.sec-header.purple{background:#4A148C}
+.sec-header.teal{background:#006064}
+.sec-header.red{background:#B71C1C}
+.sec-body{padding:16px 18px}
+
+/* ASSUMPTION BOX */
+.assume{background:#E8F5E9;border-left:4px solid #4CAF50;padding:10px 14px;margin-bottom:12px;border-radius:0 6px 6px 0;font-size:12px;line-height:1.6}
+.assume strong{color:#1B5E20}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr th{background:#2E7D32;color:#fff;padding:9px 10px;text-align:center;font-weight:700;border:1px solid #1B5E20}
+thead tr th:first-child{text-align:left}
+td{padding:8px 10px;border:1px solid #C8E6C9;text-align:center;vertical-align:middle}
+td:first-child{text-align:left;font-weight:600}
+tr:nth-child(even) td{background:#F1F8E9}
+.total-row td{background:#1B5E20!important;color:#fff;font-weight:800}
+.subtotal-row td{background:#A5D6A7!important;color:#1B5E20;font-weight:700}
+.neg{color:#C62828;font-weight:700}
+.pos{color:#1B5E20;font-weight:700}
+.na{color:#9E9E9E}
+.phase-tag{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:700}
+.p1{background:#E3F2FD;color:#0D47A1}
+.p2{background:#E8F5E9;color:#1B5E20}
+.p3{background:#FFF3E0;color:#E65100}
+
+/* HIGHLIGHT BOXES */
+.highlight-row{display:flex;gap:12px;margin:12px 0}
+.hl-box{flex:1;padding:12px 14px;border-radius:8px;text-align:center}
+.hl-box .val{font-size:22px;font-weight:800;display:block;line-height:1.2}
+.hl-box .lbl{font-size:11px;margin-top:4px;opacity:.85}
+.hl-green{background:#1B5E20;color:#fff}
+.hl-blue{background:#1565C0;color:#fff}
+.hl-amber{background:#E65100;color:#fff}
+.hl-purple{background:#4A148C;color:#fff}
+
+/* FORMULA */
+.formula{background:#E8F5E9;border:1.5px solid #4CAF50;border-radius:8px;padding:14px 18px;margin:10px 0;font-size:12.5px;line-height:2}
+.formula.blue{background:#E3F2FD;border-color:#1565C0}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px}
+.frac .n{border-bottom:1.5px solid #1B5E20;padding:0 5px;text-align:center}
+.frac .d{padding:0 5px;text-align:center}
+.result{display:inline-block;background:#1B5E20;color:#fff;padding:3px 14px;border-radius:16px;font-weight:800;font-size:14px;margin-left:6px}
+.result.blue{background:#1565C0}
+
+/* INSIGHT */
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.insight-card{border-left:4px solid #4CAF50;background:#F1F8E9;padding:10px 12px;border-radius:0 6px 6px 0}
+.insight-card.blue{border-color:#1565C0;background:#E3F2FD}
+.insight-card.amber{border-color:#E65100;background:#FFF3E0}
+.insight-card.purple{border-color:#4A148C;background:#F3E5F5}
+.insight-card strong{display:block;color:#1B5E20;font-size:12.5px;margin-bottom:4px}
+.insight-card.blue strong{color:#1565C0}
+.insight-card.amber strong{color:#E65100}
+.insight-card.purple strong{color:#4A148C}
+.insight-card p{font-size:11.5px;line-height:1.55;color:#333}
+
+/* PHASE COLS */
+.col-6m{background:#E3F2FD!important}
+.col-y1{background:#E8EAF6!important}
+.col-y2{background:#E8F5E9!important}
+.col-y3{background:#FFF8E1!important}
+.col-y5{background:#FCE4EC!important}
+.phase-header{background:#0D47A1!important}
+.phase-header.y1{background:#283593!important}
+.phase-header.y2{background:#1B5E20!important}
+.phase-header.y3{background:#E65100!important}
+.phase-header.y5{background:#880E4F!important}
+
+.footnote{font-size:10.5px;color:#666;margin-top:8px;padding:6px 10px;background:#F5F5F5;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="banner">
+  <div>
+    <h1>HAIRCYCLE — Phân tích Tài chính Toàn diện</h1>
+    <p>Phase 1: Thu gom + Sơ chế tóc · Phase 2: Sản xuất thảm hút dầu · Pilot: 4RAU Barber HCMC</p>
+  </div>
+  <div class="badge">SIHUB GIC Grant: 150M VND · r = 12%</div>
+</div>
+
+<!-- ASSUMPTIONS -->
+<div class="section">
+<div class="sec-header">0. Giả định nền tảng và phân kỳ chiến lược</div>
+<div class="sec-body">
+<div class="assume">
+<strong>Scope Phase 1 (Năm 0–1):</strong> MIDDLE <strong>chỉ</strong> thu gom tóc + sơ chế (sort, dry, barcode) rồi bán bulk hair sơ chế cho Capilli Trading Philippines ở giá $2/kg = 50.000 VND/kg. Không sản xuất thảm trong Phase 1.<br>
+<strong>Phase 2 (Năm 2):</strong> Hợp tác xưởng needle punch (Thịnh Gia Huy / Long An Phú, KCN Hải Sơn Long An, ~30km qua Nguyễn Văn Linh) để gia công thảm tóc hút dầu. Bán nội địa B2B: garage, kênh rạch, nhà máy, cảng → 40.000 VND/mat × 2 mats/kg = 80.000 VND/kg equiv.<br>
+<strong>Phase 3–5 (Năm 3–5):</strong> Scale đa thành phố + xuất khẩu premium → 85.000+ VND/kg equiv.<br>
+<strong>SIHUB GIC Grant:</strong> 150M VND (không hoàn lại, theo NQ 20/2023/NQ-HĐND) → tài trợ toàn bộ App MVP (120M) + một phần thiết bị (30M). Vốn tự có ròng = 64M + 50M vốn lưu động = 114M VND (~4.560 USD).
+</div>
+<table>
+<thead><tr>
+  <th>Chỉ số nền</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Barbers trung bình</td><td class="col-6m">20</td><td class="col-y1">30</td><td class="col-y2">100</td><td class="col-y3">200</td><td class="col-y5">600</td></tr>
+<tr><td>Tỷ lệ thu gom hiệu quả</td><td class="col-6m">60%</td><td class="col-y1">62%</td><td class="col-y2">65%</td><td class="col-y3">70%</td><td class="col-y5">90%</td></tr>
+<tr class="subtotal-row"><td>Volume tóc thu gom (kg)</td><td>1.092</td><td>3.549</td><td>12.740</td><td>27.300</td><td>87.360</td></tr>
+<tr><td>Sản phẩm bán ra</td><td class="col-6m"><span class="phase-tag p1">Bulk hair</span></td><td class="col-y1"><span class="phase-tag p1">Bulk hair</span></td><td class="col-y2"><span class="phase-tag p2">Thảm nội địa</span></td><td class="col-y3"><span class="phase-tag p2">Thảm nội địa</span></td><td class="col-y5"><span class="phase-tag p3">Thảm + xuất khẩu</span></td></tr>
+<tr><td>Giá bán (VND/kg equiv)</td><td class="col-6m">50.000</td><td class="col-y1">50.000</td><td class="col-y2">80.000</td><td class="col-y3">80.000</td><td class="col-y5">85.000</td></tr>
+</tbody></table>
+</div></div>
+
+<!-- TABLE 1: BARBER -->
+<div class="section">
+<div class="sec-header">1. Chi phí Stakeholder — Barber Shops (Nhà cung cấp tóc)</div>
+<div class="sec-body">
+<div class="assume"><strong>Đơn giá:</strong> 10.000 VND/kg tóc thực tế cân tại kho · <strong>Chu kỳ thanh toán:</strong> 14 ngày/lần qua Momo/VNPay · <strong>Hệ thống tích điểm:</strong> 1 điểm/kg, 3 tier (xem bảng loyalty)</div>
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Số barber active</td><td class="col-6m">9→30</td><td class="col-y1">30→50</td><td class="col-y2">50→150</td><td class="col-y3">150→300</td><td class="col-y5">500→750</td></tr>
+<tr><td>Volume (kg)</td><td class="col-6m">1.092</td><td class="col-y1">3.549</td><td class="col-y2">12.740</td><td class="col-y3">27.300</td><td class="col-y5">87.360</td></tr>
+<tr><td>Đơn giá (VND/kg)</td><td class="col-6m">10.000</td><td class="col-y1">10.000</td><td class="col-y2">10.000</td><td class="col-y3">10.000</td><td class="col-y5">10.000</td></tr>
+<tr class="total-row"><td>TỔNG CHI PHÍ BARBER (triệu VND)</td><td>10,9M</td><td>35,5M</td><td>127,4M</td><td>273,0M</td><td>873,6M</td></tr>
+<tr><td>Chi phí/tháng trung bình</td><td>1,8M</td><td>3,0M</td><td>10,6M</td><td>22,8M</td><td>72,8M</td></tr>
+<tr><td>Số lần thanh toán</td><td>13 lần</td><td>26 lần</td><td>26 lần</td><td>26 lần</td><td>26 lần</td></tr>
+</tbody></table>
+<p class="footnote">⚡ Barber chỉ nhận tiền theo kg THỰC TẾ cân tại kho (không phải kg khai báo trên app) để tránh gian lận. Nếu MAPE > 15%, lot được flag và kiểm tra trước khi thanh toán.</p>
+</div></div>
+
+<!-- TABLE 2: 3PL -->
+<div class="section">
+<div class="sec-header blue">2. Chi phí Stakeholder — 3PL Vận tải Thu gom</div>
+<div class="sec-body">
+<div class="assume"><strong>Phase 1:</strong> Tài xế xe máy thùng cố định, hợp đồng tháng · 250.000 VND/tuyến/ngày · <strong>Phase 2+:</strong> AhaMove Enterprise API · Penalty: -10% phí tháng nếu on-time rate &lt; 90% liên tục 2 tuần</div>
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Số tuyến/tuần</td><td class="col-6m">3</td><td class="col-y1">4</td><td class="col-y2">10</td><td class="col-y3">22</td><td class="col-y5">50</td></tr>
+<tr><td>Đơn giá/tuyến (VND)</td><td class="col-6m">250.000</td><td class="col-y1">250.000</td><td class="col-y2">220.000</td><td class="col-y3">200.000</td><td class="col-y5">200.000</td></tr>
+<tr><td>Số xe hoạt động</td><td class="col-6m">1 xe máy thùng</td><td class="col-y1">1–2 xe</td><td class="col-y2">3–4 xe van</td><td class="col-y3">8–10 xe</td><td class="col-y5">25–30 xe</td></tr>
+<tr class="total-row"><td>TỔNG CHI PHÍ 3PL (triệu VND)</td><td>19,5M</td><td>52,0M</td><td>130,0M</td><td>286,0M</td><td>650,0M</td></tr>
+<tr><td>Chi phí/tháng trung bình</td><td>3,3M</td><td>4,3M</td><td>10,8M</td><td>23,8M</td><td>54,2M</td></tr>
+<tr><td>Chi phí/kg tóc thu gom</td><td>17.860 đ</td><td>14.651 đ</td><td>10.204 đ</td><td>10.476 đ</td><td>7.440 đ</td></tr>
+</tbody></table>
+<p class="footnote">📉 Chi phí/kg 3PL giảm mạnh khi scale vì route density tăng — TMS K-Means phân cụm tối ưu giúp mỗi tuyến phủ nhiều điểm hơn trong cùng quãng đường.</p>
+</div></div>
+
+<!-- TABLE 3: KHO -->
+<div class="section">
+<div class="sec-header amber">3. Chi phí Stakeholder — Kho Trung gian (Nhà Bè)</div>
+<div class="sec-body">
+<div class="assume"><strong>Vị trí:</strong> Nhà Bè / Bình Chánh, trục Nguyễn Văn Linh · <strong>Giá thuê:</strong> 2–3,5 USD/m²/tháng (Savills Vietnam, 2024) · <strong>Nhân công:</strong> 1 FTE (Phase 1) → 10 FTE (Year 5)</div>
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Diện tích (m²)</td><td class="col-6m">80</td><td class="col-y1">100</td><td class="col-y2">200</td><td class="col-y3">400</td><td class="col-y5">800</td></tr>
+<tr><td>Thuê kho (triệu VND)</td><td class="col-6m">3,5M×6 = 21M</td><td class="col-y1">5M×12 = 60M</td><td class="col-y2">10M×12 = 120M</td><td class="col-y3">18M×12 = 216M</td><td class="col-y5">35M×12 = 420M</td></tr>
+<tr><td>Nhân sự vận hành</td><td class="col-6m">8M×6 = 48M</td><td class="col-y1">12M×12 = 144M</td><td class="col-y2">27M×12 = 324M</td><td class="col-y3">45M×12 = 540M</td><td class="col-y5">90M×12 = 1.080M</td></tr>
+<tr><td>Điện nước + tiện ích</td><td class="col-6m">1,5M×6 = 9M</td><td class="col-y1">2M×12 = 24M</td><td class="col-y2">3,5M×12 = 42M</td><td class="col-y3">5M×12 = 60M</td><td class="col-y5">8M×12 = 96M</td></tr>
+<tr class="total-row"><td>TỔNG CHI PHÍ KHO (triệu VND)</td><td>78,0M</td><td>228,0M</td><td>486,0M</td><td>816,0M</td><td>1.596,0M</td></tr>
+<tr><td>Chi phí/kg tóc xử lý</td><td>71.429 đ</td><td>64.244 đ</td><td>38.148 đ</td><td>29.890 đ</td><td>18.268 đ</td></tr>
+</tbody></table>
+<p class="footnote">🏭 Chi phí kho là fixed cost lớn nhất, nhưng tỷ lệ/kg giảm mạnh khi volume scale — từ 71.000đ/kg (6M) xuống 18.000đ/kg (Y5). Đây là operating leverage cốt lõi của mô hình.</p>
+</div></div>
+
+<!-- TABLE 4: APP/TECH -->
+<div class="section">
+<div class="sec-header purple">4. Chi phí Stakeholder — App & Công nghệ (TMS + WMS + Cloud)</div>
+<div class="sec-body">
+<div class="assume"><strong>CapEx App MVP:</strong> 120M VND (covered 100% bởi SIHUB GIC Grant) · <strong>Stack Phase 1:</strong> Firebase free tier + WMS barcode · <strong>Phase 3+:</strong> Odoo Community ERP</div>
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>App MVP development (one-time CapEx)</td><td class="col-6m"><strong>120M</strong></td><td class="col-y1 na">—</td><td class="col-y2 na">—</td><td class="col-y3 na">—</td><td class="col-y5 na">—</td></tr>
+<tr><td>Cloud / Firebase / hosting</td><td class="col-6m">0 (free tier)</td><td class="col-y1">6M</td><td class="col-y2">12M</td><td class="col-y3">18M</td><td class="col-y5">24M</td></tr>
+<tr><td>App maintenance & dev</td><td class="col-6m">15M</td><td class="col-y1">30M</td><td class="col-y2">48M</td><td class="col-y3">66M</td><td class="col-y5">96M</td></tr>
+<tr class="total-row"><td>TỔNG CHI PHÍ APP/TECH (excl. CapEx)</td><td>15,0M</td><td>36,0M</td><td>60,0M</td><td>84,0M</td><td>120,0M</td></tr>
+<tr><td>% doanh thu</td><td class="neg">27,5%</td><td class="neg">20,3%</td><td>5,9%</td><td>3,8%</td><td>1,6%</td></tr>
+</tbody></table>
+<p class="footnote">✅ SIHUB GIC Grant 150M covers toàn bộ App MVP (120M) + 30M thiết bị kho → chi phí tech hàng năm chỉ là maintenance, giảm từ 27% về &lt;2% doanh thu khi scale.</p>
+</div></div>
+
+<!-- TABLE 5: GIA CONG -->
+<div class="section">
+<div class="sec-header teal">5. Chi phí Stakeholder — Xưởng Gia công (Thịnh Gia Huy / Long An Phú)</div>
+<div class="sec-body">
+<div class="assume"><strong>Kích hoạt từ Phase 2 (Năm 2):</strong> Thịnh Gia Huy L.A (KCN Hải Sơn, Đức Hòa, Long An ~30km qua NVL) · <strong>Quy trình:</strong> MIDDLE giao tóc sơ chế → xưởng needle punch → MIDDLE nhận thảm → bán B2B nội địa</div>
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Phí gia công/mat (VND)</td><td class="col-6m na">—</td><td class="col-y1 na">—</td><td class="col-y2">7.000</td><td class="col-y3">6.000</td><td class="col-y5">5.000</td></tr>
+<tr><td>Số mats sản xuất</td><td class="col-6m na">—</td><td class="col-y1 na">—</td><td class="col-y2">25.480</td><td class="col-y3">54.600</td><td class="col-y5">174.720</td></tr>
+<tr class="total-row"><td>TỔNG CHI PHÍ GIA CÔNG (triệu VND)</td><td class="na">—</td><td class="na">—</td><td>178,4M</td><td>327,6M</td><td>873,6M</td></tr>
+<tr><td>Phí gia công/kg tóc</td><td class="na">—</td><td class="na">—</td><td>14.000 đ</td><td>12.000 đ</td><td>10.000 đ</td></tr>
+</tbody></table>
+<p class="footnote">⚙️ Phí gia công giảm từ 7.000 → 5.000 VND/mat theo volume. Lý do xưởng chấp nhận: nguyên liệu tóc rẻ hơn PP 70–80% → biên lợi nhuận xưởng tốt hơn, không cần margin cao từ gia công fee.</p>
+</div></div>
+
+<!-- TABLE 6: TỔNG CHI PHÍ -->
+<div class="section">
+<div class="sec-header">6. Bảng Tổng Chi phí tất cả Stakeholder (triệu VND)</div>
+<div class="sec-body">
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>① Thanh toán Barber</td><td>10,9</td><td>35,5</td><td>127,4</td><td>273,0</td><td>873,6</td></tr>
+<tr><td>② 3PL Vận tải</td><td>19,5</td><td>52,0</td><td>130,0</td><td>286,0</td><td>650,0</td></tr>
+<tr><td>③ Kho (thuê + nhân sự + tiện ích)</td><td>78,0</td><td>228,0</td><td>486,0</td><td>816,0</td><td>1.596,0</td></tr>
+<tr><td>④ App / Cloud / Tech (recurring)</td><td>15,0</td><td>36,0</td><td>60,0</td><td>84,0</td><td>120,0</td></tr>
+<tr><td>⑤ Xưởng gia công thảm</td><td class="na">—</td><td class="na">—</td><td>178,4</td><td>327,6</td><td>873,6</td></tr>
+<tr><td>⑥ Sơ chế (sort/dry labor)</td><td>5,5</td><td>17,7</td><td>63,7</td><td>136,5</td><td>436,8</td></tr>
+<tr><td>⑦ Marketing / ESG kit / Admin</td><td>6,0</td><td>12,0</td><td>24,0</td><td>36,0</td><td>60,0</td></tr>
+<tr><td>⑧ Xuất khẩu / Phân phối</td><td>5,5</td><td>17,7</td><td>38,2</td><td>81,9</td><td>349,4</td></tr>
+<tr class="subtotal-row"><td>TỔNG CHI PHÍ VẬN HÀNH (excl. CapEx)</td><td>140,4</td><td>398,9</td><td>1.107,7</td><td>2.041,0</td><td>4.959,4</td></tr>
+<tr><td>CapEx (App MVP + thiết bị)</td><td>214,0</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr>
+<tr><td style="padding-left:20px">Trong đó: SIHUB GIC Grant (không hoàn lại)</td><td class="pos">-150,0</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr>
+<tr class="total-row"><td>VỐN TỰ CÓ CẦN TRIỂN KHAI</td><td>64,0</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr>
+</tbody></table>
+</div></div>
+
+<!-- TABLE 7: DOANH THU -->
+<div class="section">
+<div class="sec-header">7. Cấu trúc Doanh thu theo Giai đoạn (triệu VND)</div>
+<div class="sec-body">
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Doanh thu bulk hair (50K VND/kg)</td><td class="col-6m">54,6</td><td class="col-y1">177,4</td><td class="col-y2 na">—</td><td class="col-y3 na">—</td><td class="col-y5 na">—</td></tr>
+<tr><td>Doanh thu thảm nội địa B2B (80K/kg)</td><td class="col-6m na">—</td><td class="col-y1 na">—</td><td class="col-y2">1.019,2</td><td class="col-y3">2.184,0</td><td class="col-y5 na">—</td></tr>
+<tr><td>Doanh thu thảm nội địa + xuất khẩu (85K/kg)</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td class="col-y5">7.425,6</td></tr>
+<tr class="subtotal-row"><td>TỔNG DOANH THU</td><td>54,6</td><td>177,4</td><td>1.019,2</td><td>2.184,0</td><td>7.425,6</td></tr>
+<tr><td>Doanh thu/tháng trung bình</td><td>9,1M</td><td>14,8M</td><td>84,9M</td><td>182,0M</td><td>618,8M</td></tr>
+<tr><td>Doanh thu/barber/tháng</td><td>0,46M</td><td>0,49M</td><td>0,85M</td><td>0,91M</td><td>1,03M</td></tr>
+</tbody></table>
+<p class="footnote">📈 Doanh thu/barber/tháng tăng từ 0.46M → 1.03M (+124%) nhờ chuyển dịch từ bán bulk hair ($2/kg) sang thảm thành phẩm cao giá trị hơn ($1.70/mat tương đương). Đây là unit economics improvement cốt lõi khi bước sang Phase 2.</p>
+</div></div>
+
+<!-- TABLE 8: P&L -->
+<div class="section">
+<div class="sec-header">8. Bảng P&L Tổng hợp (triệu VND)</div>
+<div class="sec-body">
+<table>
+<thead><tr>
+  <th>Khoản mục</th>
+  <th class="phase-header">6 tháng</th><th class="phase-header y1">Năm 1</th>
+  <th class="phase-header y2">Năm 2</th><th class="phase-header y3">Năm 3</th>
+  <th class="phase-header y5">Năm 5</th>
+</tr></thead>
+<tbody>
+<tr><td>Doanh thu</td><td>54,6</td><td>177,4</td><td>1.019,2</td><td>2.184,0</td><td>7.425,6</td></tr>
+<tr><td>Chi phí biến đổi (variable)</td><td>41,3</td><td>123,0</td><td>537,7</td><td>1.105,0</td><td>3.183,4</td></tr>
+<tr class="subtotal-row"><td>Biên đóng góp (Contribution Margin)</td><td>13,3</td><td>54,4</td><td>481,5</td><td>1.079,0</td><td>4.242,2</td></tr>
+<tr><td>Contribution Margin %</td><td>24,4%</td><td>30,7%</td><td>47,2%</td><td>49,4%</td><td>57,1%</td></tr>
+<tr><td>Chi phí cố định (fixed)</td><td>219,0</td><td>276,0</td><td>570,0</td><td>936,0</td><td>1.776,0</td></tr>
+<tr><td style="padding-left:16px">Trong đó: App CapEx (SIHUB covered)</td><td>120,0</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr>
+<tr class="subtotal-row"><td>Lợi nhuận ròng trước thuế</td><td class="neg">-205,7</td><td class="neg">-221,5</td><td class="neg">-88,5</td><td class="pos">+143,0</td><td class="pos">+2.466,2</td></tr>
+<tr><td>Thuế TNDN (20%)</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td>28,6</td><td>493,2</td></tr>
+<tr class="total-row"><td>LỢI NHUẬN SAU THUẾ (PAT)</td><td class="neg">-205,7</td><td class="neg">-221,5</td><td class="neg">-88,5</td><td class="pos">+114,4</td><td class="pos">+1.972,9</td></tr>
+<tr><td>Net Margin %</td><td class="neg">-377%</td><td class="neg">-125%</td><td class="neg">-8,7%</td><td class="pos">+5,2%</td><td class="pos">+26,6%</td></tr>
+</tbody></table>
+<div class="footnote" style="margin-top:8px">📌 <strong>Ghi chú:</strong> Loss 6T (-205,7M) gồm 120M App CapEx (one-time, SIHUB covered) + 85,7M operating loss. Operating loss thực = -85,7M (6T) và -101,5M (Y1 H2). SIHUB Grant 150M phủ toàn bộ Y1 losses. Năm 3 là năm đầu tiên có lãi.</div>
+</div></div>
+
+<!-- TABLE 9: ROI TECH -->
+<div class="section">
+<div class="sec-header blue">9. ROI Đầu tư Công nghệ (TMS K-Means + App)</div>
+<div class="sec-body">
+<div class="highlight-row">
+  <div class="hl-box hl-green"><span class="val">848%</span><span class="lbl">ROI tổng thể (scale enablement)</span></div>
+  <div class="hl-box hl-blue"><span class="val">64%</span><span class="lbl">ROI định lượng (routing + MAPE)</span></div>
+  <div class="hl-box hl-amber"><span class="val">1,4 tháng</span><span class="lbl">Payback trên lợi ích định lượng</span></div>
+  <div class="hl-box hl-purple"><span class="val">120M VND</span><span class="lbl">Tech investment (100% SIHUB)</span></div>
+</div>
+<table>
+<thead><tr><th>Nguồn lợi ích từ TMS</th><th>Cơ chế</th><th>Lợi ích Năm 1</th><th>Lợi ích Năm 2</th><th>Lợi ích Năm 3</th></tr></thead>
+<tbody>
+<tr><td>Route optimization</td><td>TMS giảm 20% 3PL cost vs manual routing</td><td>10,4M</td><td>26,0M</td><td>57,2M</td></tr>
+<tr><td>MAPE tracking</td><td>Giảm 5% batch rejection → tiết kiệm 5% revenue</td><td>8,9M</td><td>51,0M</td><td>109,2M</td></tr>
+<tr><td>Scale enablement</td><td>TMS cho phép quản lý 100+ barbers (vs max 15-20 manual)</td><td>168,5M</td><td>1.017,9M</td><td>—</td></tr>
+<tr class="subtotal-row"><td>Tổng lợi ích định lượng</td><td></td><td>187,8M</td><td>1.094,9M</td><td>—</td></tr>
+<tr><td>Tech investment (CapEx)</td><td>App MVP một lần</td><td colspan="3" style="text-align:center">120M VND (SIHUB covered)</td></tr>
+<tr class="total-row"><td>ROI = Lợi ích / Đầu tư</td><td></td><td>156%</td><td>912%</td><td>—</td></tr>
+</tbody></table>
+<div class="formula blue">
+ROI<sub>tech</sub> =
+<span class="frac"><span class="n">Tổng lợi ích định lượng Năm 2 (1.094,9M)</span><span class="d">CapEx App (120M)</span></span>
+× 100% <span class="result blue">= 912%</span>
+&nbsp;&nbsp;|&nbsp;&nbsp;
+Payback = <span class="frac"><span class="n">120M</span><span class="d">1.094,9M / 12 tháng</span></span> = <span class="result blue">1,3 tháng</span>
+</div>
+<p class="footnote">💡 ROI 912% nghe có vẻ cực cao, nhưng lý do hợp lý: TMS không chỉ tối ưu route mà <strong>quyết định khả năng scale của toàn bộ business model</strong>. Không có TMS, MIDDLE không thể vận hành quá 15–20 barbers một cách có lợi nhuận. Với TMS, scale lên 100+ barbers mở ra 1.019M VND doanh thu.</p>
+</div></div>
+
+<!-- TABLE 10: NPV & DPP -->
+<div class="section">
+<div class="sec-header red">10. NPV & DPP — Chỉ số hoàn vốn dự án (với SIHUB Grant)</div>
+<div class="sec-body">
+<div class="assume">
+<strong>Giả định:</strong> Vốn tự có ròng = 114M VND (sau khi trừ SIHUB grant 150M) · r = 12%/năm (chi phí cơ hội SME Việt Nam) · Y1 operating loss được bù bởi SIHUB incubation support (cash flow Y1 = 0 về phần equity)
+</div>
+<table>
+<thead><tr><th>Năm (t)</th><th>Dòng tiền</th><th>Ghi chú</th><th>PV = CF/(1,12)ᵗ</th><th>Lũy kế PV</th></tr></thead>
+<tbody>
+<tr><td><strong>Năm 0</strong></td><td class="neg">-114,0M</td><td>Vốn tự có (sau SIHUB grant 150M)</td><td class="neg">-114,0M</td><td class="neg">-114,0M</td></tr>
+<tr><td><strong>Năm 1</strong></td><td>0M</td><td>SIHUB grant bù toàn bộ Y1 operating loss (-167M)</td><td>0M</td><td class="neg">-114,0M</td></tr>
+<tr><td><strong>Năm 2</strong></td><td class="neg">-88,5M</td><td>PAT âm — cần angel round ~100M VND</td><td class="neg">-70,5M</td><td class="neg">-184,5M</td></tr>
+<tr><td><strong>Năm 3</strong></td><td class="pos">+114,4M</td><td>PAT dương lần đầu — Phase 2 có lãi</td><td class="pos">+81,4M</td><td class="neg">-103,1M</td></tr>
+<tr><td><strong>Năm 5</strong></td><td class="pos">+1.972,9M</td><td>Phase 3 scale — lợi nhuận mạnh</td><td class="pos">+1.118,8M</td><td class="pos">+1.015,7M</td></tr>
+</tbody></table>
+<div class="formula">
+NPV =
+<span class="frac"><span class="n">-114,0</span><span class="d">(1,12)⁰</span></span> +
+<span class="frac"><span class="n">0</span><span class="d">(1,12)¹</span></span> +
+<span class="frac"><span class="n">-88,5</span><span class="d">(1,12)²</span></span> +
+<span class="frac"><span class="n">114,4</span><span class="d">(1,12)³</span></span> +
+<span class="frac"><span class="n">1.972,9</span><span class="d">(1,12)⁵</span></span>
+− 114 = <span class="result">1.150,72 triệu VND ≫ 0 ✅</span>
+</div>
+<div class="formula">
+DPP =
+<span class="frac"><span class="n">|Lũy kế PV âm tại Năm 3| = 103,1M</span><span class="d">PV tại Năm 5 = 1.118,8M</span></span>
++ 3 năm ≈ <span class="result">3,09 năm</span>
+&nbsp;&nbsp;vs&nbsp;&nbsp; Mục tiêu 6 năm → Hoàn vốn sớm hơn <span class="result" style="background:#C62828">48%</span> ✅
+</div>
+<div class="highlight-row" style="margin-top:12px">
+  <div class="hl-box hl-green"><span class="val">1.150,7M VND</span><span class="lbl">NPV (r=12%) > 0 — Dự án sinh lời</span></div>
+  <div class="hl-box hl-blue"><span class="val">3,09 năm</span><span class="lbl">DPP — Hoàn vốn trước mục tiêu 6 năm</span></div>
+  <div class="hl-box hl-amber"><span class="val">64M VND</span><span class="lbl">Vốn tự có CapEx (sau SIHUB) = $2.560 USD</span></div>
+  <div class="hl-box hl-purple"><span class="val">~17× ROI</span><span class="lbl">NPV/Vốn tự có = 1.150/64 ≈ 18x</span></div>
+</div>
+</div></div>
+
+<!-- STRATEGIC INSIGHTS -->
+<div class="section">
+<div class="sec-header" style="background:#0D47A1">11. Strategic Insights — Ý nghĩa chiến lược từ các con số</div>
+<div class="sec-body">
+<div class="insight-grid">
+  <div class="insight-card">
+    <strong>🔑 Năm 3 là "Inflection Point" chiến lược</strong>
+    <p>Contribution Margin nhảy từ 30,7% (Y1) lên 49,4% (Y3) nhờ hai yếu tố đồng thời: (1) volume tăng phân bổ chi phí cố định, (2) chuyển từ bulk hair $2/kg sang thảm B2B nội địa 80.000đ/kg equiv (+60%). Đây là năm doanh nghiệp chứng minh product-market fit với thị trường nội địa trước khi mở rộng xuất khẩu.</p>
+  </div>
+  <div class="insight-card blue">
+    <strong>💡 SIHUB Grant = Zero-dilution scale lever</strong>
+    <p>150M VND grant không hoàn lại thay thế equity investment, giúp co-founders giữ 100% cổ phần qua toàn bộ Phase 1. Với vốn tự có chỉ 64M (App CapEx net), ROI trên vốn tự có đạt ~18× (1.150M NPV / 64M). Đây là lợi thế tuyệt đối — startup B2B thông thường cần 5–10× để thuyết phục VC.</p>
+  </div>
+  <div class="insight-card amber">
+    <strong>⚠️ Bottleneck thật sự là Kho, không phải Tech</strong>
+    <p>Chi phí kho chiếm 44–55% tổng fixed costs xuyên suốt, và nhân sự vận hành là khoản lớn nhất trong kho. Con số này cho thấy HairCycle là "labor-intensive operations business" được enable bởi tech — không phải "tech business". Chiến lược scale phải tập trung vào quy trình hóa kho, không phải thêm feature app. WMS + RFID từ Year 2 là critical để giảm cost/kg kho.</p>
+  </div>
+  <div class="insight-card purple">
+    <strong>📈 Phase 2 nội địa = demand test trước khi xuất khẩu</strong>
+    <p>Garage, kênh rạch, xưởng sản xuất là "gần nhà" và dễ tiếp cận nhất — không cần C/O, phytosanitary cert, hay ASTM F726. Đây là market validation tốn ít chi phí nhất. Mỗi tháng tích lũy B2B customer testimonials ở Việt Nam là ammunition để pitch international buyer (Philippines, Australia) với social proof thực tế, không chỉ prototype.</p>
+  </div>
+  <div class="insight-card">
+    <strong>🌊 Tầm nhìn xuất khẩu: điều kiện cần vs điều kiện đủ</strong>
+    <p>Điều kiện cần: đủ volume (>20 tấn/năm cho FCL container). Điều kiện đủ: ASTM F726 test data + track record domestic customer. Năm 5 ở 87.360 kg/year = 87,4 tấn → 4–5 FCL shipments/năm sang Philippines + Australia. Revenue từ export ở $1.20/mat và 80% margin hơn domestic → xuất khẩu là upside, domestic là foundation.</p>
+  </div>
+  <div class="insight-card blue">
+    <strong>🔢 Con số cần nhớ khi pitch investor</strong>
+    <p>Break-even operating (lean) cần 250 kg/tháng = 17–18 barbers. Break-even full ops (Y2) cần 7.125 kg/tháng = 110 barbers. DPP 3,09 năm (so với target 6 năm). NPV 1,15 tỷ VND trên vốn tự có 64M = ROI 18× — đây là tỷ suất cực kỳ hấp dẫn với impact investor.</p>
+  </div>
+</div>
+</div></div>
+
+<div style="text-align:center;padding:12px;color:#78909C;font-size:11px">
+HairCycle Financial Analysis · Tất cả số liệu là ước tính dựa trên pilot 4RAU Barber HCMC · r = 12%/năm · Thuế TNDN 20% · SIHUB GIC Grant: NQ 20/2023/NQ-HĐND
+</div>
+
+</div>
+</body>
+</html>
